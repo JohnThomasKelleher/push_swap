@@ -12,60 +12,56 @@
 
 #include "hache.h"
 
-int	rra(s_tack **a, s_tack **b)
+int	rra(s_tack *a)
 {
-  b += 0;
-  a[0] = a[0]->last;
-  return (NULL);
+  a = a->last;
+  return (1);
 }
 
-int	rrb(s_tack **a, s_tack **b)
+int	rrb(s_tack *b)
 {
-  a += 0;
-  b[0] = b[0]->last;
-  return (NULL);
+  b = b->last;
+  return (1);
 }
 
-int	ra(s_tack **a, s_tack **b)
+int	ra(s_tack *a)
 {
-  b += 0;
-  a[0] = a[0]->next;
-  return (NULL);
+  a = a->next;
+  return (1);
 }
 
-int	rb(s_tack **a, s_tack **b)
+int	rb(s_tack *b)
 {
-  a += 0;
-  b[0] = b[0]->next;
-  return (NULL);
+  b = b->next;
+  return (1);
 }
 
-int	rab(s_tack **a, s_tack **b)
+int	rab(s_tack *a, s_tack *b)
 {
-  rot_a(a, b);
-  rot_b(a, b);
-  return (NULL);
+  ra(a);
+  rb(b);
+  return (1);
 }
 
-int	rrab(s_tack **a, s_tack **b)
+int	rrab(s_tack *a, s_tack *b)
 {
-  *a = rev_rot_a(a, b);
-  *b = rev_rot_b(a, b);
-  return (NULL);
+  rra(a);
+  rrb(b);
+  return (1);
 }
 
 
-int	sab(s_tack **a, s_tack **b)
+int	sab(s_tack *a, s_tack *b)
 {
 
-  *a = swap_a(a, b);
-  *b = swap_b(a, b);
-  return (NULL);
+  sa(a);
+  sb(b);
+  return (1);
 }
 
 
 
-int	sa(s_tack **a, s_tack **b)
+int	sa(s_tack *a, s_tack *b)
 {
   //s_tack *a_hold;
   s_tack *next_2;
@@ -73,23 +69,23 @@ int	sa(s_tack **a, s_tack **b)
   //s_tack *last_2;
 
 
-  if (!a[0])
+  if (!a)
     return (0);
-  item_2 = a[0]->next;
-  next_2 = a[0]->next->next;
-  a[0]->last->next = item_2;
-  a[0]->next->next->last = a[0];
-  a[0]->next->next = a[0];
-  a[0]->next->last = a[0]->last;
-  a[0]->next = next_2;
-  a[0]->last = item_2;
-  a[0] = item_2;
+  item_2 = a->next;
+  next_2 = a->next->next;
+  a->last->next = item_2;
+  a->next->next->last = a;
+  a->next->next = a;
+  a->next->last = a->last;
+  a->next = next_2;
+  a->last = item_2;
+  a = item_2;
   b += 0;
 
-  return (NULL);
+  return (1);
 }
 
-int	sb(s_tack **a, s_tack **b)
+int	sb(s_tack *a, s_tack *b)
 {
   //s_tack *a_hold;
   s_tack *next_2;
@@ -97,34 +93,34 @@ int	sb(s_tack **a, s_tack **b)
   //s_tack *last_2;
 
 
-  if (!b[0])
+  if (!b)
     return (0);
-  item_2 = b[0]->next;
-  next_2 = b[0]->next->next;
-  b[0]->last->next = item_2;
-  b[0]->next->next->last = a[0];
-  b[0]->next->next = a[0];
-  b[0]->next->last = a[0]->last;
-  b[0]->next = next_2;
-  b[0]->last = item_2;
-  b[0] = item_2;
+  item_2 = b->next;
+  next_2 = b->next->next;
+  b->last->next = item_2;
+  b->next->next->last = a;
+  b->next->next = a;
+  b->next->last = a->last;
+  b->next = next_2;
+  b->last = item_2;
+  b = item_2;
   a += 0;
 
-  return (NULL);
+  return (1);
 }
 
 
-int	pa(s_tack **a, s_tack **b)
+int	pa(s_tack *a, s_tack *b)
 {
   s_tack *b_hold;
   s_tack *src;
   s_tack *dst;
 
 
-  src = b[0];
-  dst = a[0];
-  b[0] = b[0]->next;
-  a[0] = src;
+  src = b;
+  dst = a;
+  b = b->next;
+  a = src;
   b_hold = src;
   if (!src || !src->last || !src->next)
     return (0);
@@ -135,20 +131,20 @@ int	pa(s_tack **a, s_tack **b)
   (dst && dst->last) ? (dst->last->next = src) : (0);
   (dst) ? (dst->last = src) : (0);
 
-  return (NULL);
+  return (1);
 }
 
-int	pb(s_tack **a, s_tack **b)
+int	pb(s_tack *a, s_tack *b)
 {
   s_tack *a_hold;
   s_tack *src;
   s_tack *dst;
 
 
-  src = a[0];
-  dst = b[0];
-  a[0] = a[0]->next;
-  b[0] = src;
+  src = a;
+  dst = b;
+  a = a->next;
+  b = src;
   a_hold = src;
   if (!src || !src->last || !src->next)
     return (0);
@@ -158,6 +154,5 @@ int	pb(s_tack **a, s_tack **b)
   src->last = (dst && dst->last) ? (dst->last) : (src);
   (dst && dst->last) ? (dst->last->next = src) : (0);
   (dst) ? (dst->last = src) : (0);
-
-  return (NULL);
+  return (1);
 }

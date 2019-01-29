@@ -30,68 +30,71 @@
 
  */
 
-int	s_tage2(s_tack a, s_tack b, met m) //check for the prerotated end condition
+int	s_tage2(s_tack *a, s_tack *b, struct s_meta m) //check for the prerotated end condition
 {
-
+  s_tack *hold;
+  int last;
+  
+  hold = a;
+  last = a->rank;
+  while (a->rank != hold->rank)
+    {
+      if (a->rank != ( last + 1) || a->rank == 1)
+	return (0);
+	last = a->rank;
+      a = a->next;
+    }
+  hold = b;
+  last = b->rank;
+  while (b != hold)
+    {
+      if (b->rank != (last -1) || b->rank == m.len)
+	return (0);
+      last = b->rank;
+      b = b->next;
+    }
+  return (1);
 }
 
-int	rec(s_tack a, s_tack b, met m)
+int	rec(s_tack *a, s_tack *b, m_et m)
 {
   int check;
   
-  check = (m->calls >= m->min) ? (1) : (0);
-    if(c_heck2(a, b, m) && check)
+  check = (m.calls >= m.min) ? (1) : (0);
+  if(c_heck2(a, b, m) && check)
       return (1);
-  if (SWAPAB2(a, b) && sab(*a, *b) && (m->calls += 1) && check)
+  if (SWAPAB(a, b) && sab(a, b) && (m.calls += 1) && check)
     {
       if(c_heck2(a, b, m))
 	return (1);
     }
-  else if (SWAPA2(a) && sa(*a) && (m->calls += 1) && check)
-    (c_heck2(a, b, m)) ? (return (1)) : (return (0));
-  else if (SWAPB2(b) && sb(*b) && (m->calls += 1) && check)
-    (c_heck2(a, b, m)) ? (return (1)) : (return (0));
-  if (PUSHA(a, b) && pa(*a, *b) && (m->calls += 1) && check)
-    (c_heck2(a, b, m)) ? (return (1)) : (return (0));
-  else if (PUSHB(a, b) && pb(*a, *b) && (m->calls += 1) && check0)
-    (c_heck2(a, b, m)) ? (return (1)) : (return (0));
+  else if (SWAPA2(a) && sa(a, b) && (m.calls += 1) && check)
+    return ((c_heck2(a, b, m)) ? (1) : (0));
+  else if (SWAPB2(b) && sb(a, b) && (m.calls += 1) && check)
+    return ((c_heck2(a, b, m)) ? (1) : (0));
+  if (PUSHA(a, b) && pa(a, b) && (m.calls += 1) && check)
+    return ((c_heck2(a, b, m)) ? (1) : (0));
+  else if (PUSHB(a, b) && pb(a, b) && (m.calls += 1) && check)
+    return ((c_heck2(a, b, m)) ? (1) : (0));
   if (s_tage2(a, b, m) && c_heck2(a, b, m))
     return (1);
   rrab(a, b);
+  m.calls++;
   return (rec(a, b, m));
   
 
 }
 
-int	c_heck2(s_tack a, s_tack b, met m)
+int	c_heck2(s_tack *a, s_tack *b, m_et m)
 {
-  s_tack  hold;
-  int	r_hold;
-
-  r_hold = a->rank - 1;
-  hold = a;
-  while (a != hold)
-    {
-      if (a->rank != (r_hold + 1))
-	return (0);
-      r_hold++;
-      a = a->next;
-      
-    }
-  b = hold;
-  r_hold = b->rank -1;
-  while (b != hold)
-    {
-      if (b->rank != (r_hold + 1))
-	return (0);
-      r_hold++;
-      b = b->next;
-    }
+  while (a->last->rank != m.len)
+    rra(a);
+  while (b->last->rank != 1)
+    rra(b);
   return (1);
-  
 }
 
-void	s_plit(s_tack a, s_tack b, met m)
+void	s_plit(s_tack a, s_tack b, m_et m)
 {
   s_tack hold;
   
@@ -103,16 +106,16 @@ void	s_plit(s_tack a, s_tack b, met m)
       else if ((SWAPAB2(a, b) && sab(&a, &b)) || (SWAPA2(a) && sa(&a)) || 1)
 	rab(&a, &b);
        
-      a = a.next;
+      a = a->next;
       
     }
 }
 
-void	a_nswer(s_tack a, met m)
+void	a_nswer(s_tack a, m_et m)
 {
   s_tack b;
   
-  b.next = NULL, b.last = NULL;
+  b->next = NULL, b->last = NULL;
   s_plit(a, b);
   
   rec(a);
@@ -123,29 +126,29 @@ void	a_nswer(s_tack a, met m)
 
 int main(int argc, char **argv)
 {
-  s_tack A;
+  s_tack *a;
   //s_tack B;
   int sort[argc];
   int ret;
-  met m;
+  m_et m;
   
   m.best = malloc(sizeof(char) * 5500);
-  //B.next = NULL; B.last = NULL;
-  A.next = NULL; A.last = NULL;
-  m->len = argc;
-  m->pivot = argc /2;
+  //B->next = NULL; B->last = NULL;
+  a->next = NULL; a->last = NULL;
+  m.len = argc;
+  m.pivot = argc /2;
   argv[argc] = NULL;
   if (argc == 1)
     return (0);
-  if (!init_a(&A, argc, argv, sort))
+  if (!init_a(&a, argc, argv, sort))
     {
       printf("Error\n");
       return (0);
     }
   s_ort(sort);
-  r_ank(sort, A);
+  r_ank(sort, a);
 
-  a_nswer(A, m);
+  a_nswer(a, m);
   p_rint(m);
   return (0);
 }
