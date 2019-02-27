@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/17 21:14:24 by jkellehe          #+#    #+#             */
-/*   Updated: 2019/01/18 22:16:20 by jkellehe         ###   ########.fr       */
+/*   Updated: 2019/01/30 16:52:48 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,13 +82,16 @@ int	init_a(s_tack *A, int argc, char **argv, int *sort)
 	i = 2;
 	if((hold = bt_atoi(argv[1])) == -1777777) 
 	  return (0);
-	A->value = hold;
+	//A = next_A((int)hold);
 	sort[1] = hold;
 	head = A;
+	A->value = hold;
+	A->is_low = 0; A->is_high = 0;
 	while (i < argc)
 	{
 	  if (-1777777 == (hold = bt_atoi(argv[i])))
 	    return (0);
+	  A->is_low = 0; A->is_high = 0;
 	  A->next = next_A(hold);
 	  A->next->last = A;
 	  A = (A->next) ? (A->next) : (A);
@@ -135,20 +138,34 @@ void	r_ank(int *sort, s_tack *A)
 {
 	int i;
 	s_tack *head;
+	int hold;
 
 	head = A;
 	i = 1;
 	while (i < sort[0])
 	{
 		A = head;
-		while (A)
+		hold = 0;
+		while (A != head || !hold)
 		{
-			if (A->value == sort[i])
+		  if (A->value == sort[i] && i == 1)
+		    {
+		      A->rank = i;
+		      A->is_low = 1;
+		    }
+		  else if (A->value == sort[i] && i == (sort[0] -1))
+		    {
+		      A->rank = i;
+		      A->is_high = 1;
+		    }
+			else if (A->value == sort[i])
 				A->rank = i;
 			A = A->next;
+			hold++;
 		}
 		i++;
 	}
+
 }
 
 s_tack	*rev_rot_a(s_tack **a, s_tack **b)
@@ -388,7 +405,7 @@ void		ft_error()
 
 }
 
-int		main(int argc, char **argv)
+/*int		main(int argc, char **argv)
 {
 	s_tack A;
 	s_tack B;
@@ -416,3 +433,4 @@ int		main(int argc, char **argv)
 		ft_error();
 	return (0);
 }
+*/

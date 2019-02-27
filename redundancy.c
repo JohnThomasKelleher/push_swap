@@ -12,147 +12,210 @@
 
 #include "hache.h"
 
-int	rra(s_tack *a)
+int	rra(s_tack **a, m_et *m)
 {
-  a = a->last;
+  m->len += 0;
+  a[0] = a[0]->last;
+  m->moves++;
+  m->best[m->i++] = '9';
   return (1);
 }
 
-int	rrb(s_tack *b)
+int	rrb(s_tack **b, m_et *m)
 {
-  b = b->last;
+  m->len += 0;
+  if (b[0])
+    b[0] = b[0]->last;
+  m->moves++;
+  m->best[m->i++] = 'a';
   return (1);
 }
 
-int	ra(s_tack *a)
+int	ra(s_tack **a, m_et *m)
 {
-  a = a->next;
+  m->len += 0;
+  if (a[0])
+    a[0] = a[0]->next;
+  m->moves++;
+  m->best[m->i++] = '6';
   return (1);
 }
 
-int	rb(s_tack *b)
+int	rb(s_tack **b, m_et *m)
 {
-  b = b->next;
+  m->len += 0;
+  if (b[0])
+    b[0] = b[0]->next;
+  m->moves++;
+  m->best[m->i++] = '7';
   return (1);
 }
 
-int	rab(s_tack *a, s_tack *b)
+int	rab(s_tack **a, s_tack **b, m_et *m)
 {
-  ra(a);
-  rb(b);
+  m->len += 0;
+  ra(a, m);
+  rb(b, m);
+  m->moves++;
+  m->best[m->i++] = '8';
   return (1);
 }
 
-int	rrab(s_tack *a, s_tack *b)
+int	rrab(s_tack **a, s_tack **b, m_et *m)
 {
-  rra(a);
-  rrb(b);
-  return (1);
-}
-
-
-int	sab(s_tack *a, s_tack *b)
-{
-
-  sa(a);
-  sb(b);
-  return (1);
-}
-
-
-
-int	sa(s_tack *a, s_tack *b)
-{
-  //s_tack *a_hold;
-  s_tack *next_2;
-  s_tack *item_2;
-  //s_tack *last_2;
-
-
-  if (!a)
-    return (0);
-  item_2 = a->next;
-  next_2 = a->next->next;
-  a->last->next = item_2;
-  a->next->next->last = a;
-  a->next->next = a;
-  a->next->last = a->last;
-  a->next = next_2;
-  a->last = item_2;
-  a = item_2;
-  b += 0;
-
-  return (1);
-}
-
-int	sb(s_tack *a, s_tack *b)
-{
-  //s_tack *a_hold;
-  s_tack *next_2;
-  s_tack *item_2;
-  //s_tack *last_2;
-
-
-  if (!b)
-    return (0);
-  item_2 = b->next;
-  next_2 = b->next->next;
-  b->last->next = item_2;
-  b->next->next->last = a;
-  b->next->next = a;
-  b->next->last = a->last;
-  b->next = next_2;
-  b->last = item_2;
-  b = item_2;
-  a += 0;
-
+  m->len += 0;
+  rra(a, m);
+  rrb(b, m);
+  m->moves++;
+  m->best[m->i++] = 'b';
   return (1);
 }
 
 
-int	pa(s_tack *a, s_tack *b)
+int	sab(s_tack **a, s_tack **b, m_et *m)
 {
-  s_tack *b_hold;
-  s_tack *src;
-  s_tack *dst;
-
-
-  src = b;
-  dst = a;
-  b = b->next;
-  a = src;
-  b_hold = src;
-  if (!src || !src->last || !src->next)
-    return (0);
-  src->last->next = src->next;
-  src->next->last = src->last;
-  src->next = (dst) ? (dst) : (src);
-  src->last = (dst && dst->last) ? (dst->last) : (src);
-  (dst && dst->last) ? (dst->last->next = src) : (0);
-  (dst) ? (dst->last = src) : (0);
-
+  m->len += 0;
+  sa(a, m);
+  sb(b, m);
+  m->moves++;
+  m->best[m->i++] = '3';
   return (1);
 }
 
-int	pb(s_tack *a, s_tack *b)
+
+
+int	sa(s_tack **a, m_et *m)
 {
-  s_tack *a_hold;
-  s_tack *src;
-  s_tack *dst;
+  s_tack *one;
+  s_tack *two;
+  s_tack *three;
+  s_tack *four;
+  //s_tack **last_2;
+  //1234 1324
+
+  if (m->len_a == 2)
+    {
+      ra(a, m);
+      return (1);
+    }
+  m->len += 0;
+  one = a[0]->last;
+  two = a[0];
+  three = a[0]->next;
+  four = a[0]->next->next;
+  one->next = three;
+  three->last = one;
+  three->next = two;
+  two->last = three;
+  two->next = four;
+  four->last = two;
+  a[0] = three;
+  m->moves++;
+  m->best[m->i++] = '1';
+  return (1);
+}
+
+int	sb(s_tack **b, m_et *m)
+{
+  s_tack *one;
+  s_tack *two;
+  s_tack *three;
+  s_tack *four;
+  //s_tack **last_2;
+  //1234 1324
+  if (m->len_b == 2)
+    {
+      rb(b, m);
+      return (1);
+    }
+  m->len += 0;
+  one = b[0]->last;
+  two = b[0];
+  three = b[0]->next;
+  four = b[0]->next->next;
+  one->next = three;
+  three->last = one;
+  three->next = two;
+  two->last = three;
+  two->next = four;
+  four->last = two;
+  b[0] = three;
+  m->moves++;
+  m->best[m->i++] = '2';
+  return (1);
+}
 
 
-  src = a;
-  dst = b;
-  a = a->next;
-  b = src;
-  a_hold = src;
-  if (!src || !src->last || !src->next)
-    return (0);
-  src->last->next = src->next;
-  src->next->last = src->last;
-  src->next = (dst) ? (dst) : (src);
-  src->last = (dst && dst->last) ? (dst->last) : (src);
-  (dst && dst->last) ? (dst->last->next = src) : (0);
-  (dst) ? (dst->last = src) : (0);
+int	pb(s_tack **a, s_tack **b, m_et *m)
+{
+  s_tack *last_a;
+  s_tack *h_a;
+  s_tack *next_a;
+  s_tack *last_b;
+  s_tack *h_b;
+  
+  
+
+  last_a = a[0]->last;
+  h_a = a[0];
+  next_a = a[0]->next;
+  last_b = (b[0]) ? (b[0]->last) : (NULL);
+  h_b = b[0];
+  
+
+  last_a->next = next_a;
+  next_a->last = last_a;
+  a[0] = next_a;
+
+  h_a->last = last_b;
+  h_a->next = h_b;
+  (last_b) ? (last_b->next  = h_a) : (0);
+  (h_b) ? (h_b->last = h_a) : (0);
+  if (!b[0])
+    {
+      h_a->next = h_a;
+      h_a->last = h_a;
+
+    }
+  b[0] = h_a;
+  
+  m->len_a--;
+  m->len_b++;
+  m->moves++;
+  m->best[m->i++] = '5';
+  return (1);
+}
+
+int	pa(s_tack **a, s_tack **b, m_et *m)
+{
+  s_tack *last_b;
+  s_tack *h_b;
+  s_tack *next_b;
+  s_tack *last_a;
+  s_tack *h_a;
+
+
+
+
+  last_b = b[0]->last;
+  h_b = b[0];
+  next_b = b[0]->next;
+  last_a = (a[0]) ? (a[0]->last) : (NULL);
+  h_a = a[0];
+
+
+  last_b->next = next_b;
+  next_b->last = last_b;
+  b[0] = next_b;
+
+  h_b->last = last_a;
+  h_b->next = h_a;
+  (last_a) ? (last_a->next  = h_b) : (0);
+  (h_a) ? (h_a->last = h_b) : (0);
+  a[0] = h_b;
+  m->len_a++;
+  m->len_b--;
+  m->moves++;
+  m->best[m->i++] = '4';
   return (1);
 }

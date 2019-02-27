@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/27 15:26:52 by jkellehe          #+#    #+#             */
-/*   Updated: 2019/01/27 15:26:54 by jkellehe         ###   ########.fr       */
+/*   Updated: 2019/01/30 17:23:14 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,117 +30,261 @@
 
  */
 
-int	s_tage2(s_tack *a, s_tack *b, struct s_meta m) //check for the prerotated end condition
+int	s_tage2(s_tack *a, s_tack *b, struct s_meta *m) //check for the prerotated end condition
 {
   s_tack *hold;
   int last;
-  
+  int i;
+
+  i = 0;
   hold = a;
   last = a->rank;
-  while (a->rank != hold->rank)
+  a = a->next;
+  while (a->rank != hold->rank || !i)
     {
       if (a->rank != ( last + 1) || a->rank == 1)
 	return (0);
 	last = a->rank;
       a = a->next;
+      i++;
     }
-  hold = b;
-  last = b->rank;
-  while (b != hold)
+  if (b)
+  {
+  	hold = b;
+  	last = b->rank;
+	i = 0;
+	b = b->next;
+ 	while (b != hold || !i)
     {
-      if (b->rank != (last -1) || b->rank == m.len)
-	return (0);
+      if (b->rank != (last -1) || b->rank == m->len)
+			return (0);
       last = b->rank;
       b = b->next;
+      i++;
     }
+  }
   return (1);
 }
 
-int	rec(s_tack *a, s_tack *b, m_et m)
+void	v_is(s_tack *a, s_tack *b, m_et *m)
 {
-  int check;
-  
-  check = (m.calls >= m.min) ? (1) : (0);
-  if(c_heck2(a, b, m) && check)
-      return (1);
-  if (SWAPAB(a, b) && sab(a, b) && (m.calls += 1) && check)
+  int height;
+  int be;
+  int ay;
+
+  be = m->len_b;
+  ay = m->len_a;
+  height = (ay > be) ? (ay) : (be);
+  //printf("a        b\n");
+  printf("yeah\n\n\n");
+  while (height)
     {
-      if(c_heck2(a, b, m))
+      if (ay == height)
+	{
+	  printf("%10da", a->value);
+	  a = a->next;
+	}
+      else
+	printf("         a");
+      if (be == height)
+	{
+	  printf("%10db", b->value);
+	  b = b->next;
+	}
+      else
+	printf("         b");
+      be -= (be == height) ? (1) : (0);
+      ay -= (ay == height) ? (1) : (0);
+      height--;
+      printf("\n");
+    }
+}
+
+int	rec(s_tack *a, s_tack *b, m_et *m)
+{
+  //int ret;
+  int once = 1;
+
+  if(s_tage2(a, b, m))
+    return (1);
+  while (once)
+    {
+      once = 0;
+      if (a && b && SWAPAB(a, b))
+	{
+	  sab(&a, &b, m);
+	  v_is(a, b, m);
+	  m->calls++;
+	  once++;
+	  if (s_tage2(a, b, m))
+	    return (1);
+	}
+  if (a && SWAPA2(a))
+    {
+      sa(&a, m);
+      v_is(a, b, m);
+      m->calls += 1;
+      once++;          
+      if (s_tage2(a, b, m))
 	return (1);
     }
-  else if (SWAPA2(a) && sa(a, b) && (m.calls += 1) && check)
-    return ((c_heck2(a, b, m)) ? (1) : (0));
-  else if (SWAPB2(b) && sb(a, b) && (m.calls += 1) && check)
-    return ((c_heck2(a, b, m)) ? (1) : (0));
-  if (PUSHA(a, b) && pa(a, b) && (m.calls += 1) && check)
-    return ((c_heck2(a, b, m)) ? (1) : (0));
-  else if (PUSHB(a, b) && pb(a, b) && (m.calls += 1) && check)
-    return ((c_heck2(a, b, m)) ? (1) : (0));
-  if (s_tage2(a, b, m) && c_heck2(a, b, m))
+  if (b && SWAPB3(b, m->len_b))
+    {
+      sb(&b, m);
+      v_is(a, b, m);
+      m->calls+=1;
+      once++;
+      if (s_tage2(a, b, m))
+	return (1);
+    }
+  if (a && b && PUSHA(a, b))
+    {
+      pa(&a, &b, m);
+      v_is(a, b, m);
+      m->len_a++;
+      m->calls+=1;
+      once++;
+      if (s_tage2(a, b, m))
+	return (1);
+    }
+  if (a && b && PUSHB(a, b))
+    {
+      pb(&a, &b, m);
+      v_is(a, b, m);
+      m->len_b++;
+      m->calls +=1;
+      once++;
+      if (s_tage2(a, b, m))
+	return (1);
+    }
+    }
+  if (s_tage2(a, b, m))
     return (1);
-  rrab(a, b);
-  m.calls++;
+  rrab(&a, &b, m);
+  m->calls++;
   return (rec(a, b, m));
   
 
 }
 
-int	c_heck2(s_tack *a, s_tack *b, m_et m)
+int	c_heck2(s_tack *a, s_tack *b, m_et *m)
 {
-  while (a->last->rank != m.len)
-    rra(a);
-  while (b->last->rank != 1)
-    rra(b);
-  return (1);
+	int i;
+
+	i = 0;
+	if (b)
+	b += 0;
+	if (!a)
+		return (0);
+  while (i < m->len)
+  {
+	  if (a->rank <= a->last->rank)
+		  	return (0);
+	  a = a->last;
+	i++;
+  }
+  if (i == m->len)	
+  	return (1);
+  return (0);
 }
 
-void	s_plit(s_tack a, s_tack b, m_et m)
+void	s_plit(s_tack **a, s_tack **b, m_et *m)
 {
-  s_tack hold;
-  
-  hold = a;
-  while (a != hold)
+  s_tack *hold;
+
+  hold = a[0];
+  while (m->len_b < m->pivot)
     {
-      if (a->rank <= pivot && (SWAPB2(b) && sb(&b))) 
-	pb(&a, &b);
-      else if ((SWAPAB2(a, b) && sab(&a, &b)) || (SWAPA2(a) && sa(&a)) || 1)
-	rab(&a, &b);
-       
-      a = a->next;
-      
+      ((a[0] && b[0] && SWAPAB(a[0], b[0]) && sab(a, b, m)) || (a[0] && SWAPA2(a[0]) && sa(a, m)));
+      (b[0] && SWAPB2(b[0])) && sb(b, m);
+      if (a[0]->rank <= m->pivot) 
+	pb(a, b, m);
+      else
+	rab(a, b, m);
+      ((a[0] && b[0] && SWAPAB(a[0], b[0]) && sab(a, b, m)) || (a[0] && SWAPA2(a[0]) && sa(a, m)));
+      (b[0] && SWAPB2(b[0])) && sb(b, m);
     }
 }
 
-void	a_nswer(s_tack a, m_et m)
+void	a_nswer(s_tack *a, m_et *m)
 {
-  s_tack b;
+  s_tack **b;
   
-  b->next = NULL, b->last = NULL;
-  s_plit(a, b);
+  b = malloc(sizeof(s_tack*));
+
+  s_plit(&a, b, m);
   
-  rec(a);
+  rec(a, b[0], m);
   
   
 }
 
+void	p_rint( m_et *m)
+{
+  m->len += 0;
+  int i = 0;
+  char *x = m->best;
+
+  while (i < m->i)
+    {
+      if (x[i] == '1')
+	printf("sa\n");
+      else if (x[i] == '2')
+	printf("sb\n");
+      else if (x[i] == '3')
+	printf("ss\n");
+      else if (x[i] == '4')
+	printf("pa\n");
+      else if (x[i] == '5')
+	printf("pb\n");
+      else if (x[i] == '6')
+	printf("ra\n");
+      else if (x[i] == '7')
+	printf("rb\n");
+      else if (x[i] == '8')
+	printf("rr\n");
+      else if (x[i] == '9')
+	printf("rra\n");
+      else if (x[i] == 'a')
+	printf("rrb\n");
+      else if (x[i] == 'b')
+	printf("rrr\n");
+      
+      i++;
+    }
+  //
+}
+
+void	init_m(m_et *m, int argc)
+{
+  m->moves = 0;
+  m->best = malloc(sizeof(char) * 420);
+  m->len = (argc - 1);
+  m->pivot = argc /2;
+  m->num_elem = (argc - 1);
+  m->len_a = (argc - 1);
+  m->len_b = 0;
+  m->ret = 0;
+  m->calls = 0;
+  m->i = 0;
+  //m->min = 0;
+}
 
 int main(int argc, char **argv)
 {
   s_tack *a;
-  //s_tack B;
   int sort[argc];
-  int ret;
-  m_et m;
-  
-  m.best = malloc(sizeof(char) * 5500);
-  //B->next = NULL; B->last = NULL;
-  a->next = NULL; a->last = NULL;
-  m.len = argc;
-  m.pivot = argc /2;
+  m_et *m;
+  char ans[10000];
+
+  a = malloc(sizeof(s_tack));
+  m = malloc(sizeof(m_et));
+  init_m(m, argc);
+  m->best = ans;
   argv[argc] = NULL;
   if (argc == 1)
     return (0);
-  if (!init_a(&a, argc, argv, sort))
+  if (!init_a(a, argc, argv, sort))
     {
       printf("Error\n");
       return (0);
