@@ -33,107 +33,107 @@
 void	f_inish(s_tack **a, s_tack *b, struct s_meta *m)
 {
   
-  while (m->len_b > 0)
-    {
-      pa(a, &b, m);
-      //m->len_b--;
-    }
-}
+  while (m->len_b >  0) 
+     { 
+       pa(a, &b, m); 
+       //m->len_b--; 
+     } 
+ } 
 
-int	s_tage2(s_tack **a, s_tack *b, struct s_meta *m) //check for the prerotated end condition
-{
-  s_tack *hold;
-  int last;
-  int i;
-  s_tack *a_hold;
+ int	s_tage2(s_tack **a, s_tack *b, struct s_meta *m) //check for the prerotated end condition 
+ { 
+   s_tack *hold; 
+   int last; 
+   int i; 
+   s_tack *a_hold; 
 
-  a_hold = a[0];
-  i = 0;
-  hold = a[0];
-  last = a[0]->rank;
-  a[0] = a[0]->next;
-  while (a[0]->rank != hold->rank || !i)
-    {
-      if (a[0]->rank != ( last + 1) || a[0]->rank == 1)
-	{
-	  a[0] = a_hold;
-	return (0);
-	}
-	last = a[0]->rank;
-      a[0] = a[0]->next;
-      i++;
-    }
-  a[0] = a_hold;
-  if (b)
-  {
-  	hold = b;
-  	last = b->rank;
-	i = 0;
-	b = b->next;
- 	while (b != hold || !i)
-    {
-      if (b->rank != (last -1) || b->rank == m->len)
-			return (0);
-      last = b->rank;
-      b = b->next;
-      i++;
-    }
-  }
-  f_inish(a, b, m);
-  return (1);
-}
+   a_hold = a[0]; 
+   i = 0; 
+   hold = a[0]; 
+   last = a[0]->rank; 
+   a[0] = a[0]->next; 
+   while (a[0]->rank != hold->rank || !i) 
+     { 
+       if (a[0]->rank != ( last + 1) || a[0]->rank == 1) 
+ 	{ 
+ 	  a[0] = a_hold; 
+ 	return (0); 
+ 	} 
+ 	last = a[0]->rank; 
+       a[0] = a[0]->next; 
+       i++; 
+     } 
+   a[0] = a_hold; 
+   if (b) 
+   { 
+   	hold = b; 
+   	last = b->rank; 
+ 	i = 0; 
+ 	b = b->next; 
+  	while (b != hold || !i) 
+     { 
+       if (b->rank != (last -1) || b->rank == m->len) 
+ 			return (0); 
+       last = b->rank; 
+       b = b->next; 
+       i++; 
+     } 
+   } 
+   f_inish(a, b, m); 
+   return (1); 
+ } 
 
-void	v_is(s_tack *a, s_tack *b, m_et *m)
-{
-  int height;
-  int be;
-  int ay;
+ void	v_is(s_tack *a, s_tack *b, m_et *m) 
+ { 
+   int height; 
+   int be; 
+   int ay; 
 
-  be = m->len_b;
-  ay = m->len_a;
-  height = (ay > be) ? (ay) : (be);
-  //printf("a        b\n");
-  printf("yeah\n\n\n");
-  while (height)
-    {
-      if (ay == height)
-	{
-	  printf("%10da", a->value);
-	  a = a->next;
-	}
-      else
-	printf("         a");
-      if (be == height)
-	{
-	  printf("%10db", b->value);
-	  b = b->next;
-	}
-      else
-	printf("         b");
-      be -= (be == height) ? (1) : (0);
-      ay -= (ay == height) ? (1) : (0);
-      height--;
-      printf("\n");
-    }
-}
+   be = m->len_b; 
+   ay = m->len_a; 
+   height = (ay > be) ? (ay) : (be); 
+   //printf("a        b\n"); 
+   printf("yeah\n\n\n"); 
+   while (height) 
+     { 
+       if (ay == height) 
+ 	{ 
+ 	  printf("%10da", a->value); 
+ 	  a = a->next; 
+ 	} 
+       else 
+ 	printf("         a"); 
+       if (be == height) 
+ 	{ 
+ 	  printf("%10db", b->value); 
+ 	  b = b->next; 
+ 	} 
+       else 
+ 	printf("         b"); 
+       be -= (be == height) ? (1) : (0); 
+       ay -= (ay == height) ? (1) : (0); 
+       height--; 
+       printf("\n"); 
+     } 
+ } 
 
-int	x_s2(s_tack *x, m_et *m, int a)
-{
-  int i;
-  int len;
+ int	x_s2(s_tack *x, m_et *m, int a) 
+ { 
+   int i; 
+   int len; 
 
-  i = 0;
-  len = (a) ? (m->len_a) : (m->len_b);
-  while (i < len)
-    {
-      if (a && x->rank > x->next->rank)
-	return (0);
-      else if (x->rank < x->next->rank)
-	return (0);
-      i++;
-    }
-  return (1);
-}
+   i = 0; 
+   len = (a) ? (m->len_a) : (m->len_b); 
+   while (i < len) 
+     { 
+       if (a && x->rank > x->next->rank) 
+ 	return (0); 
+       else if (x->rank < x->next->rank) 
+ 	return (0); 
+       i++; 
+     } 
+   return (1); 
+ } 
 
 
 s_tack *rec(s_tack *a, s_tack *b, m_et *m)
