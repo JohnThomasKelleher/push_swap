@@ -17,7 +17,8 @@ int	rra(s_tack **a, m_et *m)
   m->len += 0;
   a[0] = a[0]->last;
   m->moves++;
-  m->best[m->i++] = '9';
+  if (!m->sub)
+	 printf("rra\n");
   return (1);
 }
 
@@ -27,7 +28,8 @@ int	rrb(s_tack **b, m_et *m)
   if (b[0])
     b[0] = b[0]->last;
   m->moves++;
-  m->best[m->i++] = 'a';
+  if(!m->sub)
+    printf("rrb\n");
   return (1);
 }
 
@@ -37,7 +39,8 @@ int	ra(s_tack **a, m_et *m)
   if (a[0])
     a[0] = a[0]->next;
   m->moves++;
-  m->best[m->i++] = '6';
+  if (!m->sub)
+    printf("ra\n");
   return (1);
 }
 
@@ -47,27 +50,32 @@ int	rb(s_tack **b, m_et *m)
   if (b[0])
     b[0] = b[0]->next;
   m->moves++;
-  m->best[m->i++] = '7';
+  if (!m->sub)
+    printf("rb\n");
   return (1);
 }
 
 int	rab(s_tack **a, s_tack **b, m_et *m)
 {
   m->len += 0;
+  printf("rr\n");
+  m->sub = 1;
   ra(a, m);
   rb(b, m);
+  m->sub = 0;
   m->moves++;
-  m->best[m->i++] = '8';
   return (1);
 }
 
 int	rrab(s_tack **a, s_tack **b, m_et *m)
 {
   m->len += 0;
+  printf("rrr\n");
+  m->sub = 1;
   rra(a, m);
   rrb(b, m);
+  m->sub = 0;
   m->moves++;
-  m->best[m->i++] = 'b';
   return (1);
 }
 
@@ -75,10 +83,12 @@ int	rrab(s_tack **a, s_tack **b, m_et *m)
 int	sab(s_tack **a, s_tack **b, m_et *m)
 {
   m->len += 0;
+  printf("ss\n");
+  m->sub = 1;
   sa(a, m);
   sb(b, m);
+  m->sub = 0;
   m->moves++;
-  m->best[m->i++] = '3';
   return (1);
 }
 
@@ -111,7 +121,9 @@ int	sa(s_tack **a, m_et *m)
   four->last = two;
   a[0] = three;
   m->moves++;
-  m->best[m->i++] = '1';
+  if (!m->sub)
+    printf("sa\n");
+  //m->best[m->i++] = '1';
   return (1);
 }
 
@@ -141,7 +153,9 @@ int	sb(s_tack **b, m_et *m)
   four->last = two;
   b[0] = three;
   m->moves++;
-  m->best[m->i++] = '2';
+  if (!m->sub)
+    printf("sb\n");
+  //m->best[m->i++] = '2';
   return (1);
 }
 
@@ -182,7 +196,8 @@ int	pb(s_tack **a, s_tack **b, m_et *m)
   m->len_a--;
   m->len_b++;
   m->moves++;
-  m->best[m->i++] = '5';
+  printf("pb\n");
+  //m->best[m->i++] = '5';
   return (1);
 }
 
@@ -216,6 +231,7 @@ int	pa(s_tack **a, s_tack **b, m_et *m)
   m->len_a++;
   m->len_b--;
   m->moves++;
-  m->best[m->i++] = '4';
+  printf("pa\n");
+  //m->best[m->i++] = '4';
   return (1);
 }

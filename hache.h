@@ -56,7 +56,7 @@ struct			s_meta
   int calls;
   int min;
   int moves;
- 
+  int sub;
 };   
 
 
@@ -66,8 +66,8 @@ int     init_a(s_tack *A, int argc, char **argv, int *sort);
 void    a_nswer(s_tack *a, m_et *m);
 void    s_plit(s_tack **a, s_tack **b, m_et *m);
 int     c_heck2(s_tack *a, s_tack *b, m_et *m);
-int     rec(s_tack *a, s_tack *b, m_et *m);
-int     s_tage2(s_tack *a, s_tack *b, m_et *m);
+s_tack    *rec(s_tack *a, s_tack *b, m_et *m);
+int     s_tage2(s_tack **a, s_tack *b, m_et *m);
 int             c_heck(s_tack *a_head, int *sort);
 s_tack *swap_a(s_tack **a, s_tack **b);
 s_tack *swap_b(s_tack **a, s_tack **b);

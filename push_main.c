@@ -30,24 +30,40 @@
 
  */
 
-int	s_tage2(s_tack *a, s_tack *b, struct s_meta *m) //check for the prerotated end condition
+void	f_inish(s_tack **a, s_tack *b, struct s_meta *m)
+{
+  
+  while (m->len_b > 0)
+    {
+      pa(a, &b, m);
+      //m->len_b--;
+    }
+}
+
+int	s_tage2(s_tack **a, s_tack *b, struct s_meta *m) //check for the prerotated end condition
 {
   s_tack *hold;
   int last;
   int i;
+  s_tack *a_hold;
 
+  a_hold = a[0];
   i = 0;
-  hold = a;
-  last = a->rank;
-  a = a->next;
-  while (a->rank != hold->rank || !i)
+  hold = a[0];
+  last = a[0]->rank;
+  a[0] = a[0]->next;
+  while (a[0]->rank != hold->rank || !i)
     {
-      if (a->rank != ( last + 1) || a->rank == 1)
+      if (a[0]->rank != ( last + 1) || a[0]->rank == 1)
+	{
+	  a[0] = a_hold;
 	return (0);
-	last = a->rank;
-      a = a->next;
+	}
+	last = a[0]->rank;
+      a[0] = a[0]->next;
       i++;
     }
+  a[0] = a_hold;
   if (b)
   {
   	hold = b;
@@ -63,6 +79,7 @@ int	s_tage2(s_tack *a, s_tack *b, struct s_meta *m) //check for the prerotated e
       i++;
     }
   }
+  f_inish(a, b, m);
   return (1);
 }
 
@@ -100,13 +117,32 @@ void	v_is(s_tack *a, s_tack *b, m_et *m)
     }
 }
 
-int	rec(s_tack *a, s_tack *b, m_et *m)
+int	x_s2(s_tack *x, m_et *m, int a)
+{
+  int i;
+  int len;
+
+  i = 0;
+  len = (a) ? (m->len_a) : (m->len_b);
+  while (i < len)
+    {
+      if (a && x->rank > x->next->rank)
+	return (0);
+      else if (x->rank < x->next->rank)
+	return (0);
+      i++;
+    }
+  return (1);
+}
+
+
+s_tack *rec(s_tack *a, s_tack *b, m_et *m)
 {
   //int ret;
   int once = 1;
-
-  if(s_tage2(a, b, m))
-    return (1);
+  
+  if(s_tage2(&a, b, m))
+    return (a);
   while (once)
     {
       once = 0;
@@ -116,8 +152,8 @@ int	rec(s_tack *a, s_tack *b, m_et *m)
 	  v_is(a, b, m);
 	  m->calls++;
 	  once++;
-	  if (s_tage2(a, b, m))
-	    return (1);
+	  if (s_tage2(&a, b, m))
+	    return (a);
 	}
   if (a && SWAPA2(a))
     {
@@ -125,8 +161,8 @@ int	rec(s_tack *a, s_tack *b, m_et *m)
       v_is(a, b, m);
       m->calls += 1;
       once++;          
-      if (s_tage2(a, b, m))
-	return (1);
+      if (s_tage2(&a, b, m))
+	return (a);
     }
   if (b && SWAPB3(b, m->len_b))
     {
@@ -134,8 +170,8 @@ int	rec(s_tack *a, s_tack *b, m_et *m)
       v_is(a, b, m);
       m->calls+=1;
       once++;
-      if (s_tage2(a, b, m))
-	return (1);
+      if (s_tage2(&a, b, m))
+	return (a);
     }
   if (a && b && PUSHA(a, b))
     {
@@ -144,8 +180,8 @@ int	rec(s_tack *a, s_tack *b, m_et *m)
       m->len_a++;
       m->calls+=1;
       once++;
-      if (s_tage2(a, b, m))
-	return (1);
+      if (s_tage2(&a, b, m))
+	return (a);
     }
   if (a && b && PUSHB(a, b))
     {
@@ -154,13 +190,18 @@ int	rec(s_tack *a, s_tack *b, m_et *m)
       m->len_b++;
       m->calls +=1;
       once++;
-      if (s_tage2(a, b, m))
-	return (1);
+      if (s_tage2(&a, b, m))
+	return (a);
     }
     }
-  if (s_tage2(a, b, m))
-    return (1);
-  rrab(&a, &b, m);
+  if (s_tage2(&a, b, m))
+    return (a);
+  else if (x_s2(b, m, 0))
+    rra(&a, m);
+  else if (x_s2(a, m, 1))
+    rrb(&b, m);
+  else
+    rrab(&a, &b, m);
   m->calls++;
   return (rec(a, b, m));
   
@@ -214,12 +255,12 @@ void	a_nswer(s_tack *a, m_et *m)
 
   s_plit(&a, b, m);
   
-  rec(a, b[0], m);
+  a = rec(a, b[0], m);
   
   
 }
 
-void	p_rint( m_et *m)
+/*void	p_rint( m_et *m)
 {
   m->len += 0;
   int i = 0;
@@ -232,7 +273,10 @@ void	p_rint( m_et *m)
       else if (x[i] == '2')
 	printf("sb\n");
       else if (x[i] == '3')
+	{
 	printf("ss\n");
+	i += 2;
+	}
       else if (x[i] == '4')
 	printf("pa\n");
       else if (x[i] == '5')
@@ -242,18 +286,23 @@ void	p_rint( m_et *m)
       else if (x[i] == '7')
 	printf("rb\n");
       else if (x[i] == '8')
+	{
 	printf("rr\n");
+	i += 2;
+	}
       else if (x[i] == '9')
 	printf("rra\n");
       else if (x[i] == 'a')
 	printf("rrb\n");
       else if (x[i] == 'b')
+	{
 	printf("rrr\n");
-      
+	i += 2;
+	}
       i++;
     }
   //
-}
+}*/
 
 void	init_m(m_et *m, int argc)
 {
@@ -267,6 +316,7 @@ void	init_m(m_et *m, int argc)
   m->ret = 0;
   m->calls = 0;
   m->i = 0;
+  m->sub = 0;
   //m->min = 0;
 }
 
@@ -293,6 +343,6 @@ int main(int argc, char **argv)
   r_ank(sort, a);
 
   a_nswer(a, m);
-  p_rint(m);
+  //p_rint(m);
   return (0);
 }
