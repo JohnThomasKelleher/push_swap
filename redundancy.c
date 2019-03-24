@@ -12,89 +12,110 @@
 
 #include "hache.h"
 
-int	rra(s_tack **a, m_et *m)
+int	rra(s_tack **a, s_tack **b, m_et *m)
 {
-  m->len += 0;
+  b += 0;
   a[0] = a[0]->last;
-  m->moves++;
-  if (!m->sub)
+  if (m)
+    {
+      m->moves++;
+      if (!m->sub)
 	 printf("rra\n");
+    }
   return (1);
 }
 
-int	rrb(s_tack **b, m_et *m)
+int	rrb(s_tack **a, s_tack **b, m_et *m)
 {
-  m->len += 0;
+  a += 0;
   if (b[0])
     b[0] = b[0]->last;
-  m->moves++;
-  if(!m->sub)
-    printf("rrb\n");
+  if (m)
+    {
+      m->moves++;
+      if(!m->sub)
+	printf("rrb\n");
+    }
   return (1);
 }
 
-int	ra(s_tack **a, m_et *m)
+int	ra(s_tack **a, s_tack **b, m_et *m)
 {
-  m->len += 0;
+  b += 0;
   if (a[0])
     a[0] = a[0]->next;
-  m->moves++;
-  if (!m->sub)
-    printf("ra\n");
+  if (m)
+    {
+      m->moves++;
+      if (!m->sub)
+	printf("ra\n");
+    }
   return (1);
 }
 
-int	rb(s_tack **b, m_et *m)
+int	rb(s_tack **a, s_tack **b, m_et *m)
 {
-  m->len += 0;
+  a += 0;
   if (b[0])
     b[0] = b[0]->next;
-  m->moves++;
-  if (!m->sub)
-    printf("rb\n");
+  if (m)
+    {
+      m->moves++;
+      if (!m->sub)
+	printf("rb\n");
+    }
   return (1);
 }
 
 int	rab(s_tack **a, s_tack **b, m_et *m)
 {
-  m->len += 0;
-  printf("rr\n");
-  m->sub = 1;
-  ra(a, m);
-  rb(b, m);
-  m->sub = 0;
-  m->moves++;
+  m && printf("rr\n");
+  if (m)
+    m->sub = 1;
+  ra(a, b,  m);
+  rb(a, b, m);
+  if (m)
+    {
+      m->sub = 0;
+      m->moves++;
+    }
   return (1);
 }
 
 int	rrab(s_tack **a, s_tack **b, m_et *m)
 {
-  m->len += 0;
-  printf("rrr\n");
-  m->sub = 1;
-  rra(a, m);
-  rrb(b, m);
-  m->sub = 0;
-  m->moves++;
+  m && printf("rrr\n");
+  if (m)
+    m->sub = 1;
+  rra(a, b,  m);
+  rrb(a, b, m);
+  if (m)
+    {
+      m->sub = 0;
+      m->moves++;
+    }
   return (1);
 }
 
 
 int	sab(s_tack **a, s_tack **b, m_et *m)
 {
-  m->len += 0;
-  printf("ss\n");
-  m->sub = 1;
-  sa(a, m);
-  sb(b, m);
-  m->sub = 0;
-  m->moves++;
+  m && printf("ss\n");
+  if (m)
+    m->sub = 1;
+  sa(a, b, m);
+  sb(a, b, m);
+  if (m)
+    {
+      m->sub = 0;
+      m->moves++;
+    }
   return (1);
 }
 
 
 
-int	sa(s_tack **a, m_et *m)
+int	sa(s_tack **a, s_tack **b, m_et *m)
 {
   s_tack *one;
   s_tack *two;
@@ -103,12 +124,12 @@ int	sa(s_tack **a, m_et *m)
   //s_tack **last_2;
   //1234 1324
 
-  if (m->len_a == 2)
+  b += 0;
+  if (a[0]->next == a[0]->last)
     {
-      ra(a, m);
+      ra(a, b, m);
       return (1);
     }
-  m->len += 0;
   one = a[0]->last;
   two = a[0];
   three = a[0]->next;
@@ -120,14 +141,14 @@ int	sa(s_tack **a, m_et *m)
   two->next = four;
   four->last = two;
   a[0] = three;
-  m->moves++;
-  if (!m->sub)
+  m && m->moves++;
+  if (m && !m->sub)
     printf("sa\n");
   //m->best[m->i++] = '1';
   return (1);
 }
 
-int	sb(s_tack **b, m_et *m)
+int	sb(s_tack **a, s_tack **b, m_et *m)
 {
   s_tack *one;
   s_tack *two;
@@ -135,12 +156,13 @@ int	sb(s_tack **b, m_et *m)
   s_tack *four;
   //s_tack **last_2;
   //1234 1324
-  if (m->len_b == 2)
+  
+  a += 0;
+  if (b[0]->next == b[0]->last)
     {
-      rb(b, m);
+      rb(a, b, m);
       return (1);
     }
-  m->len += 0;
   one = b[0]->last;
   two = b[0];
   three = b[0]->next;
@@ -152,8 +174,8 @@ int	sb(s_tack **b, m_et *m)
   two->next = four;
   four->last = two;
   b[0] = three;
-  m->moves++;
-  if (!m->sub)
+  m && m->moves++;
+  if (m && !m->sub)
     printf("sb\n");
   //m->best[m->i++] = '2';
   return (1);
@@ -168,8 +190,8 @@ int	pb(s_tack **a, s_tack **b, m_et *m)
   s_tack *last_b;
   s_tack *h_b;
   
-  
-
+  a += 0;
+  m && (m->pivot += (m && m->hold) ? (0) : (1));
   last_a = a[0]->last;
   h_a = a[0];
   next_a = a[0]->next;
@@ -193,10 +215,13 @@ int	pb(s_tack **a, s_tack **b, m_et *m)
     }
   b[0] = h_a;
   
-  m->len_a--;
-  m->len_b++;
-  m->moves++;
-  printf("pb\n");
+  if (m)
+    {
+      m->len_a--;
+      m->len_b++;
+      m->moves++;
+      printf("pb\n");
+    }
   //m->best[m->i++] = '5';
   return (1);
 }
@@ -209,8 +234,8 @@ int	pa(s_tack **a, s_tack **b, m_et *m)
   s_tack *last_a;
   s_tack *h_a;
 
-
-
+  b += 0;
+  m && (m->pivot -= (m->hold) ? (1) : (0));
 
   last_b = b[0]->last;
   h_b = b[0];
@@ -228,10 +253,13 @@ int	pa(s_tack **a, s_tack **b, m_et *m)
   (last_a) ? (last_a->next  = h_b) : (0);
   (h_a) ? (h_a->last = h_b) : (0);
   a[0] = h_b;
-  m->len_a++;
-  m->len_b--;
-  m->moves++;
-  printf("pa\n");
+  if (m)
+    {
+      m->len_a++;
+      m->len_b--;
+      m->moves++;
+      printf("pa\n");
+    }
   //m->best[m->i++] = '4';
   return (1);
 }
