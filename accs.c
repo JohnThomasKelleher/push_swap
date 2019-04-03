@@ -74,7 +74,7 @@ int     bt_atoi(char **x)
 
 int     init_a(s_tack *A, int argc, char **argv, int *sort)
 {
-  write(1, "init_a\n", 7);
+  //write(1, "init_a\n", 7);
   int hold;
   s_tack *first;
   int i;
@@ -143,7 +143,7 @@ void    r_ank(int *sort, s_tack *A)
 
 void    s_ort(int *sort)
 {
-  write(1, "s_ort\n", 6);
+  //write(1, "s_ort\n", 6);
   int i;
   int not_sorted;
   int at_least_one;

@@ -13,13 +13,15 @@
 #include "hache.h"
 
 void	f_inish(s_tack **a, s_tack *b, struct s_meta *m)
-{
-  v_is(a[0], b);
+{//do_push(s_tack **a, s_tack **b, m_et *m, int undo, int ay)
+  //v_is(a[0], b);
   while (m->len_b >  0) 
      { 
-       pa(a, &b, m); 
+       do_push(a, &b, m, 0, 1); 
        //m->len_b--; 
-     } 
+     }
+  m->best[m->moves++] = '\0';
+  m->fin = 1;
  } 
 
  int	s_tage2(s_tack **a, s_tack *b, struct s_meta *m) //check for the prerotated end condition 
@@ -99,13 +101,15 @@ void	f_inish(s_tack **a, s_tack *b, struct s_meta *m)
    return (1); 
  } 
 
-void	v_is(s_tack *a, s_tack *b)
+void	v_is(s_tack *a, s_tack *b, m_et *m)
 {
   s_tack *hold;
   int i;
 
   i = 0;
   hold = a;
+  printf("%c i:%d moves:%d\n", m->best[(m->moves -1)], (m->i - 1), m->moves);
+  printf("%d\n", m->moves);
   printf("AAAAAAA\n");
   while (a && (a != hold || !i))
     {
@@ -123,64 +127,10 @@ void	v_is(s_tack *a, s_tack *b)
       i++;
     }
 }
-s_tack *rec(s_tack *a, s_tack *b, m_et *m)
-{
-  //int ret;
-  int once = 1;
-  
-  if(s_tage2(&a, b, m))
-    return (a);
-  while (once)
-    {
-      once = 0;
-      //v_is(a, b);
-      if (a && b && SWAPAB(a, b, m))
-	{
-	  sab(&a, &b, m);
-	  m->calls++;
-	  once++;
-	  if (s_tage2(&a, b, m))
-	    return (a);
-	}
-      if (a && SWAPA2(a, m))
-    {
-      sa(&a, NULL,  m);
-      m->calls += 1;
-      once++;          
-      if (s_tage2(&a, b, m))
-	return (a);
-    }
-  if (b && SWAPB2(b, m))
-    {
-      sb(NULL, &b, m);
-      m->calls+=1;
-      once++;
-      if (s_tage2(&a, b, m))
-	return (a);
-    }
-if (a && b && x_s2(b, m, 0) && PUSHB(a, b))
-    {
-      pb(&a, &b, m);
-      m->len_b++;
-      m->calls +=1;
-      once++;
-      if (s_tage2(&a, b, m))
-	return (a);
-	}
-    }
-  if (s_tage2(&a, b, m))
-    return (a);
-  else if (x_s2(b, m, 0))
-    rra(&a, NULL, m);
-  else if (x_s2(a, m, 1))
-    rrb(NULL, &b, m);
-  else
-    rrab(&a, &b, m);
-  m->calls++;
-  return (rec(a, b, m));
-  
 
-}
+
+
+
 
 int	c_heck2(s_tack *a, s_tack *b, m_et *m)
 {
@@ -213,22 +163,42 @@ void	s_plit(s_tack **a, s_tack **b, m_et *m)
     return ;
   while (m->len_b < m->pivot)
     {
-      ((a[0] && b[0] && SWAPAB(a[0], b[0], m) && sab(a, b, m)) || (a[0] && SWAPA2(a[0], m) && sa(a, NULL, m)));
-      (b[0] && SWAPB2(b[0], m)) && sb(NULL, b, m);
+      ((a[0] && b[0] && SWAPAB(a[0], b[0], m) && sab(a, b, m)) || (a[0] && SWAPA2(a[0], m) && do_swap(a, b, m, 0, 1)));
+      (b[0] && SWAPB2(b[0], m)) && do_swap(a, b, m, 0, 0);;
       if (s_tage2(a, b[0], m))
 	return ;
       if (a[0]->rank <= m->pivot) 
-	pb(a, b, m);
+	do_push(a, b, m, 0, 0);
       else
-	ra(a, NULL,  m);
+	do_rotate(a, b, m, 0, 1);
       if (s_tage2(a, b[0], m))
 	return ;
-      ((a[0] && b[0] && SWAPAB(a[0], b[0], m) && sab(a, b, m)) || (a[0] && SWAPA2(a[0], m) && sa(a, NULL, m)));
-      (b[0] && SWAPB2(b[0], m)) && sb(NULL, b, m);
+      ((a[0] && b[0] && SWAPAB(a[0], b[0], m) && do_ss(a, b, m, 0, 0)) || (a[0] && SWAPA2(a[0], m) && do_swap(a, b, m, 0, 1)));
+      (b[0] && SWAPB2(b[0], m)) && do_swap(a, b, m, 0, 0);
       if (s_tage2(a, b[0], m))
 	return ;
     }
   m->hold = 0;
+}
+
+void	p_rant(m_et *m)
+{
+  int i = 0;
+  while (i < m->moves && m->best[i] != '\0')
+    {
+      (m->best[i] == 'a') ? (write(1, "sa\n", 3)) : (0);
+      (m->best[i] == 'b') ? (write(1, "sb\n", 3)) : (0);
+      (m->best[i] == 'c') ? (write(1, "ss\n", 3)) : (0);
+      (m->best[i] == 'd') ? (write(1, "ra\n", 3)) : (0);
+      (m->best[i] == 'e') ? (write(1, "rb\n", 3)) : (0);
+      (m->best[i] == 'f') ? (write(1, "rr\n", 3)) : (0);
+      (m->best[i] == 'g') ? (write(1, "rra\n", 4)) : (0);
+      (m->best[i] == 'h') ? (write(1, "rrb\n", 4)) : (0);
+      (m->best[i] == 'i') ? (write(1, "rrr\n", 4)) : (0);
+      (m->best[i] == 'j') ? (write(1, "pa\n", 3)) : (0);
+      (m->best[i] == 'k') ? (write(1, "pb\n", 3)) : (0);
+	i++;
+    }
 }
 
 void	a_nswer(s_tack *a, m_et *m)
@@ -240,9 +210,14 @@ void	a_nswer(s_tack *a, m_et *m)
   b[0] = NULL;
   s_plit(&a, b, m);
   //write(1, "after split\n", 12);
-  if (!m->fin)
-    a = rec(a, b[0], m);
-  
+  if (!m->fin && rec(&a, b[0], m))
+      {
+	p_rant(m);
+      }
+  else if (m->fin)
+    p_rant(m);
+  else
+    printf("oh shit\n");
   
 }
 
@@ -262,7 +237,28 @@ void	init_m(m_et *m, int argc)
   m->sub = 0;
   m->fin = 0;
   m->hold = 0;
+  m->req = 0;
   //m->min = 0;
+}
+
+void set_req(m_et *m)
+{
+  /*
+   3->3?
+5 ->12
+100->700
+500->5500
+
+   */
+  if (m->len <= 3)
+    m->req = 3;
+  else if(m->len <=5)
+    m->req = 12;
+  else if(m->len <= 100)
+    m->req = 700;
+  else if(m->len <= 500)
+    m->req = 5500;
+  
 }
 
 
@@ -287,15 +283,18 @@ int main(int argc, char **argv)
       printf("Error\n");
       return (0);
      }
-  v_is(a, NULL);
+  //v_is(a, NULL);
   s_ort(sort);
   r_ank(sort, a);
-  printf("\n________________\n");
-  v_is(a, NULL);
+  //printf("\n________________\n");
+  //v_is(a, NULL);
   m->pivot = (sort[0] - 1) / 2;
   m->len = sort[0] - 1;
   m->len_a = m->len;
   m->num_elem = m->len;
+  set_req(m);
+  m->best = (char*)malloc(sizeof(char) * m->req + 1);
+
   //write(1, "before a_nswer", 20);
   a_nswer(a, m);
   printf("%d\n", m->moves);
